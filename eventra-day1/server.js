@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use('/api/events', require('./routes/events'));
-// app.use('/api/registrations', require('./routes/registrations'));
+app.use('/api/registrations', require('./routes/registrations'));
 // app.use('/api/attendance', require('./routes/attendance'));
 // app.use('/api/reports', require('./routes/reports'));
 
