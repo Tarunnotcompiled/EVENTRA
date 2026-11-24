@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eventra - Event Management System</title>
+<style>
+  :root { --bg:#f4f6fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --primary:#4f46e5; --primary-d:#4338ca;
+          --ok:#16a34a; --bad:#dc2626; --line:#e5e7eb; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  header { background:var(--primary); color:#fff; padding:14px 20px; display:flex; flex-wrap:wrap; align-items:center; gap:16px; }
+  header h1 { margin:0; font-size:1.3rem; }
+  nav { display:flex; flex-wrap:wrap; gap:6px; }
+  nav button { background:transparent; color:#fff; border:0; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:.95rem; }
+  nav button.active, nav button:hover { background:rgba(255,255,255,.2); }
+  main { max-width:1100px; margin:20px auto; padding:0 16px; }
+  section { display:none; } section.active { display:block; }
+  .card { background:var(--card); border-radius:12px; padding:18px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  h2 { margin:0 0 14px; font-size:1.15rem; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:18px; }
+  .stat { background:var(--card); border-radius:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .stat b { display:block; font-size:1.7rem; color:var(--primary); } .stat span { color:var(--muted); font-size:.85rem; }
+  form { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; align-items:end; }
+  label { font-size:.8rem; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+  input, select { padding:9px 10px; border:1px solid var(--line); border-radius:8px; font-size:.95rem; width:100%; }
+  button.btn, a.btn { background:var(--primary); color:#fff; border:0; padding:10px 16px; border-radius:8px; cursor:pointer;
+                      font-size:.95rem; text-decoration:none; display:inline-block; text-align:center; }
+  button.btn:hover, a.btn:hover { background:var(--primary-d); }
+  .btn.sec { background:#e0e7ff; color:var(--primary-d); } .btn.sec:hover { background:#c7d2fe; }
+  .btn.danger { background:#fee2e2; color:var(--bad); padding:6px 10px; } .btn.danger:hover { background:#fecaca; }
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:.92rem; }
+  th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th { color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; }
+  .bar { background:var(--line); border-radius:6px; height:8px; width:110px; overflow:hidden; display:inline-block; vertical-align:middle; margin-right:6px; }
+  .bar i { display:block; height:100%; background:var(--primary); }
+  .pill { padding:2px 10px; border-radius:99px; font-size:.78rem; }
+  .pill.ok { background:#dcfce7; color:var(--ok); } .pill.no { background:#fee2e2; color:var(--bad); }
+  .row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:12px; }
+  .empty { color:var(--muted); padding:14px 0; }
+  #toast { position:fixed; bottom:20px; right:20px; padding:12px 18px; border-radius:10px; color:#fff; display:none; max-width:320px; z-index:9; }
+  #toast.ok { background:var(--ok); } #toast.err { background:var(--bad); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Eventra</h1>
+  <nav id="nav">
+    <button data-view="dashboard" class="active">Dashboard</button>
+    <button data-view="events">Events</button>
+    <button data-view="registrations">Registrations</button>
+    <button data-view="attendance">Attendance</button>
+    <button data-view="reports">Reports</button>
+  </nav>
+</header>
+
+<main>
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="active">
+    <div class="stats" id="stats"></div>
+    <div class="card"><h2>Events overview</h2><div class="table-wrap" id="overview"></div></div>
+    <div class="card"><h2>By category</h2><div class="table-wrap" id="categories"></div></div>
+  </section>
+
+  <!-- EVENTS -->
+  <section id="events">
+    <div class="card">
+      <h2>Create event</h2>
+      <form id="eventForm">
+        <label>Name<input name="name" required></label>
+        <label>Date<input name="date" type="date" required></label>
+        <label>Venue<input name="venue" required></label>
+        <label>Capacity<input name="cap" type="number" min="1" required></label>
+        <label>Category<input name="category" placeholder="Workshop, Competition..."></label>
+        <button class="btn" type="submit">Add event</button>
+      </form>
+    </div>
+    <div class="card">
+      <div class="row"><h2 style="margin:0">All events</h2><button class="btn sec" id="seedBtn">Load demo data</button></div>
+      <div class="table-wrap" id="eventList"></div>
+    </div>
+  </section>
+
+  <!-- REGISTRATIONS -->
+  <section id="registrations">
+    <div class="card">
+      <h2>Register participant</h2>
+      <form id="regForm">
+        <label>Event<select name="eventId" class="event-select" required></select></label>
+        <label>Name<input name="name" required></label>
+        <label>Email<input name="email" type="email" required></label>
+        <label>Phone<input name="phone"></label>
+        <button class="btn" type="submit">Register</button>
+      </form>
+    </div>
+    <div class="card">
+      <div class="row"><h2 style="margin:0">Participants</h2>
+        <select id="regFilter" class="event-select" data-all="1"></select></div>
+      <div class="table-wrap" id="regList"></div>
+    </div>
+  </section>
+
+  <!-- ATTENDANCE -->
+  <section id="attendance">
+    <div class="card">
+      <div class="row">
+        <select id="attEvent" class="event-select"></select>
+        <button class="btn sec" id="markAll">Mark all present</button>
+        <button class="btn sec" id="clearAll">Mark all absent</button>
+      </div>
+      <div id="attSummary" class="row"></div>
+      <div class="table-wrap" id="attList"></div>
+    </div>
+  </section>
+
+  <!-- REPORTS -->
+  <section id="reports">
+    <div class="card">
+      <h2>Download reports (CSV)</h2>
+      <div class="row">
+        <a class="btn" href="/api/reports/export/events.csv">Events report</a>
+        <a class="btn" href="/api/reports/export/registrations.csv">All participants</a>
+      </div>
+      <div class="row">
+        <select id="repEvent" class="event-select"></select>
+        <a class="btn sec" id="repEventCsv" href="#">Participants of this event</a>
+      </div>
+    </div>
+    <div class="card"><h2>Event report</h2><div id="eventReport" class="empty">Choose an event above.</div></div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+async function api(url, method = 'GET', body) {
+  const res = await fetch(url, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+let toastTimer;
+function toast(msg, ok = true) {
+  const t = $('#toast');
+  t.textContent = msg; t.className = ok ? 'ok' : 'err'; t.style.display = 'block';
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.style.display = 'none'), 3000);
+}
+const run = (fn) => async (...a) => { try { await fn(...a); } catch (e) { toast(e.message, false); } };
+const bar = (p) => `<span class="bar"><i style="width:${Math.min(p, 100)}%"></i></span>${p}%`;
+const table = (heads, rows) => rows.length
+  ? `<table><thead><tr>${heads.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`
+  : '<div class="empty">Nothing here yet.</div>';
+
+/* ---------- navigation ---------- */
+const loaders = { dashboard: loadDashboard, events: loadEvents, registrations: loadRegistrations,
+                  attendance: loadAttendance, reports: loadReport };
+function show(view) {
+  document.querySelectorAll('section').forEach((s) => s.classList.toggle('active', s.id === view));
+  document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
+  run(async () => { await fillEventSelects(); await loaders[view](); })();
+}
+$('#nav').addEventListener('click', (e) => e.target.dataset.view && show(e.target.dataset.view));
+
+/* ---------- shared event dropdowns ---------- */
+async function fillEventSelects() {
+  const events = await api('/api/events');
+  document.querySelectorAll('.event-select').forEach((sel) => {
+    const keep = sel.value;
+    sel.innerHTML = (sel.dataset.all ? '<option value="">All events</option>' : '')
+      + events.map((e) => `<option value="${esc(e.id)}">${esc(e.name)} (${esc(e.date)})</option>`).join('');
+    if (keep && [...sel.options].some((o) => o.value === keep)) sel.value = keep;
+  });
+  return events;
+}
+
+/* ---------- dashboard ---------- */
+async function loadDashboard() {
+  const [s, ev, cats] = await Promise.all([api('/api/reports/summary'), api('/api/reports/events'), api('/api/reports/categories')]);
+  const stat = (n, l) => `<div class="stat"><b>${esc(n)}</b><span>${l}</span></div>`;
+  $('#stats').innerHTML = stat(s.totalEvents, 'Events') + stat(s.totalRegistrations, 'Registrations')
+    + stat(s.totalPresent, 'Present') + stat(s.overallFillRate + '%', 'Seats filled')
+    + stat(s.overallAttendanceRate + '%', 'Attendance rate');
+  $('#overview').innerHTML = table(['Event', 'Date', 'Registered', 'Fill', 'Present', 'Attendance'],
+    ev.map((e) => `<tr><td>${esc(e.name)}</td><td>${esc(e.date)}</td><td>${e.registered}/${e.cap}</td>
+      <td>${bar(e.fillRate)}</td><td>${e.present}</td><td>${bar(e.attendanceRate)}</td></tr>`));
+  $('#categories').innerHTML = table(['Category', 'Events', 'Registered', 'Fill', 'Attendance'],
+    cats.map((c) => `<tr><td>${esc(c.category)}</td><td>${c.events}</td><td>${c.registered}</td>
+      <td>${bar(c.fillRate)}</td><td>${bar(c.attendanceRate)}</td></tr>`));
+}
+
+/* ---------- events ---------- */
+async function loadEvents() {
+  const events = await api('/api/events');
+  $('#eventList').innerHTML = table(['Name', 'Date', 'Venue', 'Category', 'Registered', ''],
+    events.map((e) => `<tr><td>${esc(e.name)}</td><td>${esc(e.date)}</td><td>${esc(e.venue)}</td>
+      <td>${esc(e.category)}</td><td>${e.registered}/${e.cap}</td>
+      <td><button class="btn danger" data-del-event="${esc(e.id)}">Delete</button></td></tr>`));
+}
+$('#eventForm').addEventListener('submit', run(async (e) => {
+  e.preventDefault();
+  await api('/api/events', 'POST', Object.fromEntries(new FormData(e.target)));
+  e.target.reset(); toast('Event created'); await fillEventSelects(); await loadEvents();
+}));
+$('#eventList').addEventListener('click', run(async (e) => {
+  const id = e.target.dataset.delEvent;
+  if (!id || !confirm('Delete this event and all its registrations?')) return;
+  await api('/api/events/' + id, 'DELETE'); toast('Event deleted'); await fillEventSelects(); await loadEvents();
+}));
+$('#seedBtn').addEventListener('click', run(async () => {
+  await api('/api/events/seed', 'POST'); toast('Demo data loaded'); await fillEventSelects(); await loadEvents();
+}));
+
+/* ---------- registrations ---------- */
+async function loadRegistrations() {
+  const id = $('#regFilter').value;
+  const [regs, events] = await Promise.all([api('/api/registrations' + (id ? '?eventId=' + encodeURIComponent(id) : '')), api('/api/events')]);
+  const name = Object.fromEntries(events.map((e) => [e.id, e.name]));
+  $('#regList').innerHTML = table(['Participant', 'Email', 'Phone', 'Event', ''],
+    regs.map((r) => `<tr><td>${esc(r.name)}</td><td>${esc(r.email)}</td><td>${esc(r.phone)}</td>
+      <td>${esc(name[r.eventId])}</td><td><button class="btn danger" data-del-reg="${esc(r.id)}">Cancel</button></td></tr>`));
+}
+$('#regFilter').addEventListener('change', run(loadRegistrations));
+$('#regForm').addEventListener('submit', run(async (e) => {
+  e.preventDefault();
+  await api('/api/registrations', 'POST', Object.fromEntries(new FormData(e.target)));
+  const keep = e.target.eventId.value; e.target.reset(); e.target.eventId.value = keep;
+  toast('Participant registered'); await loadRegistrations();
+}));
+$('#regList').addEventListener('click', run(async (e) => {
+  const id = e.target.dataset.delReg;
+  if (!id || !confirm('Cancel this registration?')) return;
+  await api('/api/registrations/' + id, 'DELETE'); toast('Registration cancelled'); await loadRegistrations();
+}));
+
+/* ---------- attendance ---------- */
+async function loadAttendance() {
+  const id = $('#attEvent').value;
+  if (!id) { $('#attList').innerHTML = '<div class="empty">Create an event first.</div>'; $('#attSummary').innerHTML = ''; return; }
+  const d = await api('/api/attendance?eventId=' + encodeURIComponent(id));
+  const s = d.summary;
+  $('#attSummary').innerHTML = `<span class="pill ok">Present: ${s.present}</span>
+    <span class="pill no">Absent: ${s.absent}</span><span>Attendance rate: ${bar(s.attendanceRate)}</span>`;
+  $('#attList').innerHTML = table(['Participant', 'Email', 'Status', ''],
+    d.registrations.map((r) => `<tr><td>${esc(r.name)}</td><td>${esc(r.email)}</td>
+      <td><span class="pill ${r.present ? 'ok' : 'no'}">${r.present ? 'Present' : 'Absent'}</span></td>
+      <td><button class="btn sec" data-toggle="${esc(r.id)}">${r.present ? 'Mark absent' : 'Mark present'}</button></td></tr>`));
+}
+$('#attEvent').addEventListener('change', run(loadAttendance));
+$('#attList').addEventListener('click', run(async (e) => {
+  const id = e.target.dataset.toggle; if (!id) return;
+  await api('/api/attendance/' + id, 'PATCH', {}); await loadAttendance();
+}));
+const markAll = (present) => run(async () => {
+  const id = $('#attEvent').value; if (!id) return;
+  await api(`/api/attendance/event/${id}/mark-all`, 'POST', { present });
+  toast('Attendance updated'); await loadAttendance();
+});
+$('#markAll').addEventListener('click', markAll(true));
+$('#clearAll').addEventListener('click', markAll(false));
+
+/* ---------- reports ---------- */
+async function loadReport() {
+  const id = $('#repEvent').value;
+  $('#repEventCsv').href = id ? '/api/reports/export/registrations.csv?eventId=' + encodeURIComponent(id) : '#';
+  if (!id) { $('#eventReport').innerHTML = 'Create an event first.'; return; }
+  const r = await api('/api/reports/event/' + encodeURIComponent(id));
+  $('#eventReport').innerHTML = `<p><b>${esc(r.name)}</b> - ${esc(r.date)} at ${esc(r.venue)}</p>
+    <p>Registered ${r.registered}/${r.cap} (${r.fillRate}% full), present ${r.present}, absent ${r.absent},
+    attendance ${r.attendanceRate}%.</p>`
+    + table(['Participant', 'Email', 'Phone', 'Status'], r.participants.map((p) => `<tr><td>${esc(p.name)}</td>
+      <td>${esc(p.email)}</td><td>${esc(p.phone)}</td>
+      <td><span class="pill ${p.present ? 'ok' : 'no'}">${p.present ? 'Present' : 'Absent'}</span></td></tr>`));
+}
+$('#repEvent').addEventListener('change', run(loadReport));
+
+show('dashboard');
+</script>
+</body>
+</html>
