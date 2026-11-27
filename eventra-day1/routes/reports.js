@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Event, Registration } = require('../model');
+const { Event, Registration } = require('../models');
 
 const pct = (num, den) => (den ? Math.round((num / den) * 1000) / 10 : 0);
 

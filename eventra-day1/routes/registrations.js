@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const { Event, Registration } = require('../model');
+const { Event, Registration } = require('../models');
+const { taken } = require('../seats');
 
 // GET /api/registrations?eventId=...
 router.get('/', async (req, res) => {
@@ -20,7 +21,7 @@ router.post('/', async (req, res) => {
   const event = await Event.findById(eventId);
   if (!event) return res.status(404).json({ error: 'Event not found' });
 
-  const count = await Registration.countDocuments({ eventId });
+  const count = await taken(eventId);
   if (count >= event.cap) return res.status(409).json({ error: 'This event is full' });
 
   try {

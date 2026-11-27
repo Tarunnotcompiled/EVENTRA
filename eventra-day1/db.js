@@ -1,27 +1,10 @@
-const Database = require('better-sqlite3');
-const path = require('path');
+const mongoose = require('mongoose');
 
-const db = new Database(path.join(__dirname, 'eventra.db'));
-db.pragma('foreign_keys = ON');
+const URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/eventra';
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS events (
-    id       TEXT PRIMARY KEY,
-    name     TEXT NOT NULL,
-    date     TEXT NOT NULL,
-    venue    TEXT NOT NULL,
-    cap      INTEGER NOT NULL CHECK (cap > 0),
-    category TEXT
-  );
-  CREATE TABLE IF NOT EXISTS registrations (
-    id      TEXT PRIMARY KEY,
-    eventId TEXT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-    name    TEXT NOT NULL,
-    email   TEXT NOT NULL,
-    phone   TEXT,
-    present INTEGER NOT NULL DEFAULT 0,
-    UNIQUE (eventId, email)
-  );
-`);
+async function connectDB() {
+  await mongoose.connect(URI);
+  console.log('MongoDB connected');
+}
 
-module.exports = db;
+module.exports = connectDB;

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Event, Registration } = require('../model');
+const { Event, Registration } = require('../models');
 
 // Accepts true/false, 1/0, "true"/"false". Returns null if invalid.
 function parsePresent(v) {

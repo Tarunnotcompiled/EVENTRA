@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eventra Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bordo:#6C151E;--bordo-h:#561018;--green:#0F3D3A;--green-h:#16524e;--cream:#F5DABF;--bg:#FBF8F4;--card:#fff;--ink:#1d2b2a;--muted:#6b7270;--line:#eadfd2;--ok:#0F3D3A;--r:18px;--sh:0 8px 28px rgba(15,61,58,.07)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+h1,h2,h3,.brand b{font-family:"Playfair Display",Georgia,serif;color:var(--green);margin:0}
+.ic{width:18px;height:18px;flex:none}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.side{background:var(--green);color:var(--cream);padding:26px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:26px}
+.brand{padding:0 10px}.brand b{color:var(--cream);font-size:1.6rem}.brand span{display:block;font-size:.8rem;opacity:.7}
+nav{display:flex;flex-direction:column;gap:4px}
+nav button{display:flex;gap:12px;align-items:center;border:0;background:none;color:var(--cream);opacity:.78;font:inherit;font-weight:500;padding:11px 14px;border-radius:12px;cursor:pointer;border-left:3px solid transparent;transition:.2s}
+nav button:hover{background:rgba(245,218,191,.1);opacity:1}
+nav button.on{background:rgba(245,218,191,.14);opacity:1;border-left-color:var(--bordo);box-shadow:inset 3px 0 0 var(--cream)}
+main{padding:34px clamp(16px,4vw,44px) 60px;min-width:0}
+.top h1{font-size:2rem}.top p{margin:4px 0 22px;color:var(--muted)}
+.page{animation:in .35s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--sh);margin-bottom:18px}
+.card h3{font-size:1.1rem;margin-bottom:14px}
+.btn{font:inherit;font-weight:600;font-size:.9rem;background:var(--bordo);color:#fff;border:0;border-radius:12px;padding:10px 18px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:none;transition:background .2s,transform .15s}
+.btn:hover{background:var(--green);transform:translateY(-1px)}.btn:disabled{opacity:.4;pointer-events:none}
+.btn.g{background:var(--green)}.btn.g:hover{background:var(--bordo)}
+.btn.s{background:var(--cream);color:var(--bordo)}.btn.s:hover{background:var(--bordo);color:#fff}
+.btn.sm{padding:6px 11px;font-size:.8rem;border-radius:9px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center}
+.tools .sp{flex:1}
+input,select{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);min-width:0}
+input:focus,select:focus{outline:2px solid var(--green);border-color:var(--green)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--bordo);outline-offset:2px}
+.srch{flex:1;min-width:200px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:18px}
+.stat{display:flex;gap:14px;align-items:center;margin:0}
+.stat i{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-style:normal}
+.stat b{font-size:1.7rem;font-family:"Playfair Display",serif;color:var(--green);display:block;line-height:1.1}.stat span{color:var(--muted);font-size:.85rem}
+.welcome{background:linear-gradient(120deg,var(--green),#17504b);color:var(--cream);border:0;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.welcome h2{color:var(--cream);font-size:1.6rem}.welcome p{margin:4px 0 0;opacity:.8}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.two .card{margin:0}
+.sched{display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.sched:last-child{border:0}
+.date{background:var(--cream);color:var(--bordo);border-radius:12px;width:52px;text-align:center;padding:6px 0;font-weight:700;line-height:1.1;flex:none}.date small{display:block;font-weight:500;font-size:.7rem}
+.perf{margin-bottom:14px}.perf p{margin:0 0 4px;font-size:.88rem;display:flex;justify-content:space-between}
+.bar{height:8px;background:#f1e9df;border-radius:9px;overflow:hidden;margin-bottom:4px}.bar i{display:block;height:100%;border-radius:9px;background:var(--green);transition:width .6s}.bar.b i{background:var(--bordo)}
+.legend{font-size:.78rem;color:var(--muted);margin-bottom:12px}.legend u{text-decoration:none;display:inline-block;width:9px;height:9px;border-radius:3px;margin:0 4px 0 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.ev{padding:0;overflow:hidden;margin:0;transition:transform .2s,box-shadow .2s}.ev:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(15,61,58,.13)}
+.cover{height:118px;position:relative;color:rgba(245,218,191,.9);display:flex;align-items:flex-end;padding:12px 16px;font:700 2.6rem "Playfair Display",serif;overflow:hidden}
+.cover .pill{position:absolute;top:12px;right:12px}
+.evb{padding:16px 18px 18px}.evb h3{font-size:1.1rem;margin-bottom:8px}
+.meta{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.85rem;margin-bottom:4px}
+.pill{padding:3px 11px;border-radius:99px;font-size:.75rem;font-weight:600;display:inline-block;white-space:nowrap}
+.gr{background:#dcebe8;color:var(--green)}.bd{background:#f3d9dc;color:var(--bordo)}.cr{background:var(--cream);color:var(--bordo)}.mu{background:#ece8e3;color:#6b7270}
+.act{display:flex;gap:8px;margin-top:14px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:.8rem;padding:10px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+td{padding:12px 10px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:hover{background:#fdf9f4}tbody tr:last-child td{border:0}
+.sub{color:var(--muted);font-size:.82rem;display:block}.id{font-family:ui-monospace,monospace;font-size:.82rem;color:var(--bordo);font-weight:600}
+.empty{text-align:center;padding:44px 16px;color:var(--muted)}.empty .ic{width:38px;height:38px;color:var(--bordo);opacity:.6}.empty b{display:block;color:var(--green);font-size:1.05rem;margin:8px 0 4px}
+.sk{background:linear-gradient(90deg,#efe8df,#f8f3ec,#efe8df);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:var(--r)}@keyframes sh{to{background-position:-200% 0}}
+dialog{border:0;border-radius:22px;padding:26px;width:min(480px,94vw);box-shadow:0 30px 80px rgba(15,61,58,.3);color:var(--ink)}
+dialog::backdrop{background:rgba(15,61,58,.55);backdrop-filter:blur(2px)}dialog[open]{animation:in .25s}
+dialog h3{font-size:1.4rem;margin-bottom:16px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:14px}.f label{display:flex;flex-direction:column;gap:5px;font-size:.82rem;font-weight:600;color:var(--muted)}.f .w{grid-column:1/-1}.f input,.f select{width:100%}
+.fe{color:var(--bordo);font-weight:500;min-height:0}.f input.bad{border-color:var(--bordo)}
+.ferr{color:var(--bordo);font-size:.88rem;margin-top:10px}.dact{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:10px;font-size:.93rem}.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:500}
+#toast{position:fixed;bottom:24px;right:24px;padding:13px 20px;border-radius:14px;color:#fff;font-weight:600;display:none;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.2);animation:in .25s}
+#toast.ok{background:var(--green)}#toast.err{background:var(--bordo)}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;align-items:center;padding:12px;gap:10px;overflow-x:auto}.brand span{display:none}nav{flex-direction:row}nav button{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;padding:9px 12px}nav button.on{box-shadow:none;border-bottom-color:var(--bordo)}.two{grid-template-columns:1fr}.f{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.cols{display:flex;align-items:flex-end;gap:10px;height:140px}.cols>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}.cols i{width:100%;background:var(--bordo);border-radius:8px 8px 0 0;min-height:3px;transition:height .6s}.cols.g i{background:var(--green)}.cols small{color:var(--muted);font-size:.72rem;margin-top:4px}
+textarea{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;width:100%;color:var(--ink)}textarea:focus{outline:2px solid var(--green)}td select{padding:6px 8px;font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side"><div class="brand"><b>Eventra</b><span>Event management</span></div><nav id="nav"></nav></aside>
+  <main><header class="top"><h1 id="title"></h1><p id="sub"></p></header><div id="view"></div></main>
+</div>
+<dialog id="dlg"></dialog><div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const P={grid:'<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>',cal:'<path d="M3 5h18v16H3zM3 10h18M8 3v4M16 3v4"/>',tix:'<path d="M3 8a2 2 0 0 1 0 8v3h18v-3a2 2 0 0 1 0-8V5H3z"/>',users:'<circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 3-7 8-7s8 3 8 7M17 4a4 4 0 0 1 0 8M23 21c0-3-2-5-5-6"/>',chart:'<path d="M3 21V3M3 21h18M8 17v-5M13 17V8M18 17v-9"/>',plus:'<path d="M12 5v14M5 12h14"/>',edit:'<path d="M12 20h9M16 4l4 4L8 20H4v-4z"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"/>',eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>',pin:'<path d="M12 22s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',dl:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',check:'<path d="M5 12l5 5 9-10"/>',pct:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>'};
+const ico=n=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[n]}</svg>`;
+const today=new Date().toLocaleDateString('en-CA');
+const fmt=d=>new Date(d+'T00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+const S={events:[],regs:[],view:'dashboard',loading:true,f:{evQ:'',evCat:'',evSt:'',evSort:'date',bkQ:'',bkEv:'',bkSt:'',cuQ:'',rpEv:''}};
+const evMap=()=>Object.fromEntries(S.events.map(e=>[e.id,e]));
+const cap=e=>e.registered>=e.cap;
+const status=e=>e.date<today?['Completed','mu']:cap(e)?['Sold out','bd']:e.date===today?['Today','cr']:['Upcoming','gr'];
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const presentOf=id=>S.regs.filter(r=>r.eventId===id&&r.present).length;
+
+async function api(url,m='GET',b){const r=await fetch(url,{method:m,headers:{...(b?{'Content-Type':'application/json'}:{}),...(TOKEN()?{Authorization:'Bearer '+TOKEN()}:{})},body:b?JSON.stringify(b):undefined});const d=await r.json().catch(()=>({}));if(r.status===401){localStorage.removeItem('eventraToken');needLogin()}if(!r.ok)throw new Error(d.error||'Something went wrong');return d}
+let tt;function toast(m,ok=true){const t=$('#toast');t.textContent=m;t.className=ok?'ok':'err';t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',3000)}
+const safe=fn=>async(...a)=>{try{await fn(...a)}catch(e){toast(e.message,false)}};
+const empty=(ic,t,m)=>`<div class="empty">${ico(ic)}<b>${t}</b>${m}</div>`;
+const skel=()=>`<div class="stats">${'<div class="sk" style="height:86px"></div>'.repeat(4)}</div><div class="sk" style="height:260px"></div>`;
+const sel=(id,opts,val)=>`<select id="${id}">${opts.map(([v,l])=>`<option value="${esc(v)}"${v===val?' selected':''}>${esc(l)}</option>`).join('')}</select>`;
+const evOpts=all=>[...(all?[['','All events']]:[]),...S.events.map(e=>[e.id,`${e.name} (${fmt(e.date)})`])];
+
+/* ---------- dialogs ---------- */
+const dlg=$('#dlg');
+const TOKEN=()=>localStorage.getItem('eventraToken');
+const inr=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+function needLogin(){open(`<h3>Admin sign in</h3><form class="f" data-form="login" novalidate><label class="w">Email<input name="email" type="email" required data-msg="Enter your email."><small class="fe"></small></label><label class="w">Password<input name="password" type="password" required data-msg="Enter your password."><small class="fe"></small></label><div class="w ferr"></div><div class="w dact"><button class="btn">Sign in</button></div></form><p class="sub" style="margin-top:14px">Demo admin (development only): admin@eventpro.com / Admin@123. Customers use the <a href="/">customer site</a>.</p>`)}
+async function download(url){const r=await fetch(url,{headers:{Authorization:'Bearer '+TOKEN()}});if(!r.ok)throw new Error('Could not download the file');const a=document.createElement('a');a.href=URL.createObjectURL(await r.blob());a.download='eventra-report.csv';a.click();URL.revokeObjectURL(a.href)}
+function extra(){const d=S.dash;if(!d)return '';const s=d.stats;
+ const st=(n,l,i,bg,c)=>`<div class="card stat">${icoBox(i,bg,c)}<div><b>${n}</b><span>${l}</span></div></div>`;
+ const cols=(a,k,f,cls)=>{const m=Math.max(1,...a.map(x=>x[k]));return `<div class="cols ${cls}">${a.map(x=>`<div><i style="height:${Math.round(x[k]/m*100)}%" title="${x.month}: ${f(x[k])}"></i><small>${x.month.slice(5)}</small></div>`).join('')}</div>`};
+ const li=(a,f)=>a.length?a.map(f).join(''):'<p class="muted">Nothing yet.</p>';
+ return `<div class="stats">${st(s.customers,'Customers','users','#f3d9dc','#6C151E')}${st(inr(s.revenue),'Revenue (demo payments)','chart','#dcebe8','#0F3D3A')}${st(s.pendingPayments,'Pending payments','pct','#F5DABF','#6C151E')}${st(s.cancelled,'Cancelled bookings','trash','#f3d9dc','#6C151E')}${st(s.completedEvents,'Completed events','check','#dcebe8','#0F3D3A')}</div>
+ <div class="two"><div class="card"><h3>Revenue by month</h3>${cols(d.revenueByMonth,'total',inr,'')}</div><div class="card"><h3>Bookings by month</h3>${cols(d.bookingsByMonth,'count',String,'g')}</div></div><div style="height:18px"></div>
+ <div class="two"><div class="card"><h3>Recent bookings</h3>${li(d.recentBookings,b=>`<div class="sched"><div style="flex:1;min-width:0"><b>${esc(b.customer)}</b><span class="sub">${esc(b.event)} · <span class="id">${esc(b.bookingId)}</span></span></div><span class="pill ${b.status==='Cancelled'?'bd':b.status==='Pending'?'cr':'gr'}">${esc(b.status)}</span></div>`)}</div><div class="card"><h3>New customers</h3>${li(d.recentCustomers,u=>`<div class="sched"><div style="flex:1;min-width:0"><b>${esc(u.name)}</b><span class="sub">${esc(u.email)}</span></div></div>`)}</div></div><div style="height:18px"></div>`}
+
+const open=h=>{dlg.innerHTML=h;if(!dlg.open)dlg.showModal()};
+const close=()=>dlg.close();
+dlg.addEventListener('click',e=>{if(e.target===dlg&&TOKEN())close()});
+dlg.addEventListener('cancel',e=>{if(!TOKEN())e.preventDefault()});
+function confirmDlg(msg,fn){open(`<h3>Are you sure?</h3><p>${msg}</p><div class="dact"><button class="btn s" data-a="close">Keep it</button><button class="btn" id="yes">Yes, continue</button></div>`);$('#yes').onclick=safe(async()=>{await fn();close()})}
+function eventForm(e={}){const cats=[...new Set(S.events.map(x=>x.category).filter(Boolean))];
+open(`<h3>${e.id?'Edit event':'Create event'}</h3><form class="f" data-form="event" data-id="${esc(e.id||'')}" novalidate>
+<label class="w">Event name<input name="name" required value="${esc(e.name)}" data-msg="Give your event a name."><small class="fe"></small></label>
+<label>Date<input name="date" type="date" required value="${esc(e.date)}" data-msg="Pick a date."><small class="fe"></small></label>
+<label>Capacity<input name="cap" type="number" min="1" required value="${esc(e.cap)}" data-msg="Capacity must be at least 1."><small class="fe"></small></label>
+<label class="w">Venue<input name="venue" required value="${esc(e.venue)}" data-msg="Where is it happening?"><small class="fe"></small></label>
+<label class="w">Category<input name="category" list="cats" value="${esc(e.category)}" placeholder="Workshop, Competition..."><datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist></label>
+<label>Ticket price (INR)<input name="price" type="number" min="0" value="${esc(e.price||0)}"></label>
+<label>Status<select name="status">${['Published','Draft','Cancelled'].map(x=>`<option${x===(e.status||'Published')?' selected':''}>${x}</option>`).join('')}</select></label>
+<label>Start time<input name="startTime" type="time" value="${esc(e.startTime)}"></label><label>End time<input name="endTime" type="time" value="${esc(e.endTime)}"></label>
+<label class="w">City / location<input name="location" value="${esc(e.location)}" placeholder="Gurugram, India"></label>
+<label class="w">Description<textarea name="description" rows="3">${esc(e.description)}</textarea></label>
+<label class="w">Image URL (optional)<input name="image" value="${esc(e.image)}" placeholder="https://..."></label>
+<div class="w ferr"></div><div class="w dact"><button type="button" class="btn s" data-a="close">Cancel</button><button class="btn">${e.id?'Save changes':'Create event'}</button></div></form>`)}
+function bookingForm(){if(!S.events.length)return toast('Create an event first',false);
+open(`<h3>New booking</h3><form class="f" data-form="booking" novalidate>
+<label class="w">Event<select name="eventId">${evOpts().map(([v,l])=>`<option value="${esc(v)}"${v===S.f.bkEv?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+<label>Name<input name="name" required data-msg="Enter the customer's name."><small class="fe"></small></label>
+<label>Email<input name="email" type="email" required data-msg="Enter a valid email address."><small class="fe"></small></label>
+<label class="w">Phone<input name="phone"></label><div class="w ferr"></div>
+<div class="w dact"><button type="button" class="btn s" data-a="close">Cancel</button><button class="btn">Add booking</button></div></form>`)}
+function detail(id){const r=S.regs.find(x=>x.id===id);if(!r)return;const e=evMap()[r.eventId]||{};
+open(`<h3>Booking details</h3><dl class="kv"><dt>Booking ID</dt><dd class="id">${esc(id.slice(0,8).toUpperCase())}</dd><dt>Customer</dt><dd>${esc(r.name)}</dd><dt>Email</dt><dd>${esc(r.email)}</dd><dt>Phone</dt><dd>${esc(r.phone)||'-'}</dd><dt>Event</dt><dd>${esc(e.name)}</dd><dt>Date</dt><dd>${e.date?fmt(e.date):'-'}</dd><dt>Venue</dt><dd>${esc(e.venue)}</dd><dt>Attendance</dt><dd><span class="pill ${r.present?'gr':'bd'}">${r.present?'Present':'Absent'}</span></dd></dl>
+<div class="dact"><button class="btn s" data-a="close">Close</button><button class="btn g" data-a="toggle" data-id="${esc(id)}">${r.present?'Mark absent':'Mark present'}</button></div>`)}
+
+/* ---------- views ---------- */
+const icoBox=(n,bg,c)=>`<i style="background:${bg};color:${c}">${ico(n)}</i>`;
+const V={
+dashboard:{t:'Welcome back',s:"Here's what's happening across your events.",head:()=>'',body(){
+ const up=S.events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
+ const pres=S.regs.filter(r=>r.present).length;
+ const stat=(n,l,i,bg,c)=>`<div class="card stat">${icoBox(i,bg,c)}<div><b>${n}</b><span>${l}</span></div></div>`;
+ const perf=S.events.map(e=>`<div class="perf"><p><b>${esc(e.name)}</b><span>${e.registered}/${e.cap}</span></p><div class="bar"><i style="width:${pct(e.registered,e.cap)}%"></i></div><div class="bar b"><i style="width:${pct(presentOf(e.id),e.registered)}%"></i></div></div>`).join('');
+ return `<div class="card welcome"><div><h2>Your events at a glance</h2><p>${up.length} upcoming, ${S.regs.length} bookings so far.</p></div><div class="tools" style="margin:0"><button class="btn s" data-a="new-event">${ico('plus')}Create event</button><button class="btn s" data-a="new-booking">${ico('tix')}New booking</button><button class="btn s" data-go="bookings">${ico('check')}Mark attendance</button><a class="btn s" href="#" data-dl="/api/reports/export/events.csv">${ico('dl')}Export report</a></div></div>
+ <div class="stats">${stat(S.events.length,'Total events','cal','#f3d9dc','#6C151E')}${stat(up.length,'Upcoming events','pin','#dcebe8','#0F3D3A')}${stat(S.regs.length,'Total bookings','tix','#F5DABF','#6C151E')}${stat(pct(pres,S.regs.length)+'%','Attendance rate','pct','#dcebe8','#0F3D3A')}</div>
+ ${extra()}<div class="two"><div class="card"><h3>Upcoming schedule</h3>${up.slice(0,5).map(e=>{const d=new Date(e.date+'T00:00');return `<div class="sched"><div class="date">${d.getDate()}<small>${d.toLocaleString('en',{month:'short'})}</small></div><div style="flex:1;min-width:0"><b>${esc(e.name)}</b><span class="sub">${esc(e.venue)}</span></div><span class="pill ${cap(e)?'bd':'gr'}">${cap(e)?'Sold out':(e.cap-e.registered)+' left'}</span></div>`}).join('')||empty('cal','Nothing scheduled','Create an event to see it here.')}</div>
+ <div class="card"><h3>Event performance</h3><div class="legend"><u style="background:var(--green)"></u>Seats filled<u style="background:var(--bordo)"></u>Attended</div>${perf||empty('chart','No data yet','Performance appears once events have bookings.')}</div></div>`}},
+events:{t:'Events',s:'Create, edit and track every event.',head:()=>{const f=S.f,cats=[...new Set(S.events.map(e=>e.category).filter(Boolean))];
+ return `<div class="tools"><input class="srch" id="evQ" placeholder="Search events or venues" value="${esc(f.evQ)}" aria-label="Search events">${sel('evCat',[['','All categories'],...cats.map(c=>[c,c])],f.evCat)}${sel('evSt',[['','Any status'],['Upcoming','Upcoming'],['Today','Today'],['Sold out','Sold out'],['Completed','Completed']],f.evSt)}${sel('evSort',[['date','Sort: date'],['name','Sort: name'],['fill','Sort: most booked']],f.evSort)}<button class="btn s" data-a="seed">Demo data</button><button class="btn" data-a="new-event">${ico('plus')}Create event</button></div>`},body(){
+ const f=S.f,q=f.evQ.toLowerCase();
+ let l=S.events.filter(e=>(!q||(e.name+e.venue).toLowerCase().includes(q))&&(!f.evCat||e.category===f.evCat)&&(!f.evSt||status(e)[0]===f.evSt));
+ l.sort((a,b)=>f.evSort==='name'?a.name.localeCompare(b.name):f.evSort==='fill'?pct(b.registered,b.cap)-pct(a.registered,a.cap):a.date.localeCompare(b.date));
+ if(!l.length)return empty('cal',S.events.length?'No events match':'No events yet',S.events.length?'Try clearing your search or filters.':'Create your first event to get started.');
+ const bg=['linear-gradient(135deg,#6C151E,#0F3D3A)','linear-gradient(135deg,#0F3D3A,#6C151E)','linear-gradient(135deg,#8a3a40,#F5DABF)','linear-gradient(135deg,#0F3D3A,#4d7f7a)'];
+ return `<div class="grid">${l.map(e=>{const[s,c]=status(e),h=[...(e.category||e.name)].reduce((a,x)=>a+x.charCodeAt(0),0);
+ return `<article class="card ev"><div class="cover" style="background:${bg[h%4]}">${esc((e.category||e.name).slice(0,2))}<span class="pill ${c}">${s}</span></div><div class="evb"><h3>${esc(e.name)}</h3><div class="meta">${ico('cal')}${fmt(e.date)}</div><div class="meta">${ico('pin')}${esc(e.venue)}</div>${e.category?`<span class="pill cr" style="margin:6px 0">${esc(e.category)}</span>`:''}<div class="bar" style="margin-top:10px"><i style="width:${pct(e.registered,e.cap)}%"></i></div><div class="meta">${e.registered} of ${e.cap} booked, ${Math.max(e.cap-e.registered,0)} left</div><div class="act"><button class="btn sm s" data-a="edit-event" data-id="${esc(e.id)}">${ico('edit')}Edit</button><button class="btn sm" data-a="del-event" data-id="${esc(e.id)}">${ico('trash')}Delete</button></div></div></article>`}).join('')}</div>`}},
+bookings:{t:'Bookings',s:'Every registration, with attendance in one place.',head:()=>{const f=S.f;
+ return `<div class="tools"><input class="srch" id="bkQ" placeholder="Search by name, email or booking ID" value="${esc(f.bkQ)}" aria-label="Search bookings">${sel('bkEv',evOpts(true),f.bkEv)}${sel('bkSt',[['','Any status'],['present','Present'],['absent','Absent']],f.bkSt)}<button class="btn" data-a="new-booking">${ico('plus')}New booking</button></div>
+ <div class="tools"><button class="btn s sm" data-a="markall" data-v="1" ${f.bkEv?'':'disabled'}>Mark all present</button><button class="btn s sm" data-a="markall" data-v="0" ${f.bkEv?'':'disabled'}>Mark all absent</button><span class="sub">${f.bkEv?'Applies to the selected event.':'Choose an event to mark everyone at once.'}</span><span class="sp"></span><a class="btn g sm" href="#" data-dl="/api/reports/export/registrations.csv${f.bkEv?'?eventId='+encodeURIComponent(f.bkEv):''}">${ico('dl')}Export CSV</a></div>`},body(){
+ const f=S.f,q=f.bkQ.toLowerCase(),em=evMap();
+ const l=S.regs.filter(r=>(!f.bkEv||r.eventId===f.bkEv)&&(!f.bkSt||(f.bkSt==='present')===r.present)&&(!q||(r.name+r.email+r.id.slice(0,8)).toLowerCase().includes(q)));
+ if(!l.length)return `<div class="card">${empty('tix',S.regs.length?'No bookings match':'No bookings yet',S.regs.length?'Try a different search or filter.':'Add a booking to see it here.')}</div>`;
+ return `<div class="card tw"><table><thead><tr><th>Booking ID</th><th>Customer</th><th>Event</th><th>Phone</th><th>Attendance</th><th></th></tr></thead><tbody>${l.map(r=>`<tr><td class="id">${esc(r.id.slice(0,8).toUpperCase())}</td><td><b>${esc(r.name)}</b><span class="sub">${esc(r.email)}</span></td><td>${esc((em[r.eventId]||{}).name)}</td><td>${esc(r.phone)||'-'}</td><td><span class="pill ${r.present?'gr':'bd'}">${r.present?'Present':'Absent'}</span></td><td><button class="btn sm s" data-a="view-bk" data-id="${esc(r.id)}" aria-label="View">${ico('eye')}</button> <button class="btn sm g" data-a="toggle" data-id="${esc(r.id)}">${r.present?'Mark absent':'Mark present'}</button> <button class="btn sm" data-a="cancel" data-id="${esc(r.id)}" aria-label="Cancel booking">${ico('trash')}</button></td></tr>`).join('')}</tbody></table></div>`}},
+customers:{t:'Customers',s:'Everyone who has booked, grouped by email.',head:()=>`<div class="tools"><input class="srch" id="cuQ" placeholder="Search customers" value="${esc(S.f.cuQ)}" aria-label="Search customers"></div>`,body(){
+ const m={};S.regs.forEach(r=>{const c=m[r.email]||(m[r.email]={name:r.name,email:r.email,phone:r.phone,n:0,p:0});c.n++;if(r.present)c.p++});
+ const q=S.f.cuQ.toLowerCase(),l=Object.values(m).filter(c=>!q||(c.name+c.email).toLowerCase().includes(q)).sort((a,b)=>b.n-a.n);
+ if(!l.length)return `<div class="card">${empty('users','No customers yet','Customers appear after their first booking.')}</div>`;
+ return `<div class="card tw"><table><thead><tr><th>Customer</th><th>Phone</th><th>Bookings</th><th>Attended</th></tr></thead><tbody>${l.map(c=>`<tr><td><b>${esc(c.name)}</b><span class="sub">${esc(c.email)}</span></td><td>${esc(c.phone)||'-'}</td><td>${c.n}</td><td>${c.p}</td></tr>`).join('')}</tbody></table></div>`}},
+reports:{t:'Reports & analytics',s:'Performance of every event, ready to download.',head:()=>`<div class="tools"><a class="btn" href="#" data-dl="/api/reports/export/events.csv">${ico('dl')}Events report</a><a class="btn g" href="#" data-dl="/api/reports/export/registrations.csv">${ico('dl')}All bookings</a></div>`,body(){
+ if(!S.events.length)return `<div class="card">${empty('chart','No data to report','Create events and bookings to see analytics.')}</div>`;
+ const cat={};S.events.forEach(e=>{const k=e.category||'Uncategorised',c=cat[k]||(cat[k]={n:0,r:0,c:0,p:0});c.n++;c.r+=e.registered;c.c+=e.cap;c.p+=presentOf(e.id)});
+ const bar=p=>`<div class="bar" style="width:110px;display:inline-block;margin-right:8px;vertical-align:middle"><i style="width:${p}%"></i></div>${p}%`;
+ return `<div class="card tw"><h3>Event performance</h3><table><thead><tr><th>Event</th><th>Date</th><th>Booked</th><th>Seats filled</th><th>Present</th><th>Attendance</th></tr></thead><tbody>${S.events.map(e=>`<tr><td><b>${esc(e.name)}</b></td><td>${fmt(e.date)}</td><td>${e.registered}/${e.cap}</td><td>${bar(pct(e.registered,e.cap))}</td><td>${presentOf(e.id)}</td><td>${bar(pct(presentOf(e.id),e.registered))}</td></tr>`).join('')}</tbody></table></div>
+ <div class="card tw"><h3>By category</h3><table><thead><tr><th>Category</th><th>Events</th><th>Booked</th><th>Seats filled</th><th>Attendance</th></tr></thead><tbody>${Object.entries(cat).map(([k,c])=>`<tr><td><b>${esc(k)}</b></td><td>${c.n}</td><td>${c.r}</td><td>${bar(pct(c.r,c.c))}</td><td>${bar(pct(c.p,c.r))}</td></tr>`).join('')}</tbody></table></div>`}},
+orders:{t:'Customer orders',s:'Bookings made on the customer website.',head:()=>`<div class="tools"><input class="srch" id="odQ" placeholder="Search by customer, event or booking ID" value="${esc(S.f.odQ||'')}" aria-label="Search orders">${sel('odSt',[['','Any status'],...['Pending','Confirmed','Cancelled','Completed'].map(x=>[x,x])],S.f.odSt||'')}</div>`,body(){
+ const q=(S.f.odQ||'').toLowerCase(),l=(S.ord||[]).filter(o=>(!S.f.odSt||o.bookingStatus===S.f.odSt)&&(!q||(o.customer+o.email+o.event+o.bookingId).toLowerCase().includes(q)));
+ if(!l.length)return `<div class="card">${empty('tix','No orders found','Customer bookings from the website appear here.')}</div>`;
+ return `<div class="card tw"><table><thead><tr><th>Booking ID</th><th>Customer</th><th>Event</th><th>Tickets</th><th>Amount</th><th>Booked on</th><th>Payment</th><th>Status</th></tr></thead><tbody>${l.map(o=>`<tr><td class="id">${esc(o.bookingId)}</td><td><b>${esc(o.customer)}</b><span class="sub">${esc(o.email)}</span></td><td>${esc(o.event)}<span class="sub">${o.eventDate?fmt(o.eventDate):''}</span></td><td>${o.tickets}</td><td>${inr(o.amount)}</td><td>${fmt(String(o.date).slice(0,10))}</td><td><span class="pill ${o.paymentStatus==='Paid'?'gr':o.paymentStatus==='Pending'?'cr':'bd'}">${esc(o.paymentStatus)}</span></td><td><select data-ord="${esc(o.id)}">${['Pending','Confirmed','Cancelled','Completed'].map(x=>`<option${x===o.bookingStatus?' selected':''}>${x}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>`}},
+payments:{t:'Payments',s:'Simulated payments. No real money is collected.',head:()=>'',body(){const l=S.pay||[];
+ if(!l.length)return `<div class="card">${empty('tix','No payments yet','Payments appear when customers book events.')}</div>`;
+ return `<div class="card tw"><table><thead><tr><th>Payment ID</th><th>Booking</th><th>Customer</th><th>Event</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th></tr></thead><tbody>${l.map(p=>`<tr><td class="id">${esc(p.paymentId)}</td><td class="id">${esc(p.bookingCode)}</td><td>${esc(p.customer)}</td><td>${esc(p.event)}</td><td>${inr(p.amount)}</td><td>${esc(p.method)}</td><td>${fmt(String(p.date).slice(0,10))}</td><td><select data-pay="${esc(p.id)}">${['Pending','Paid','Failed','Refunded'].map(x=>`<option${x===p.status?' selected':''}>${x}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>`}}
+};
+const NAV=[['dashboard','Dashboard','grid'],['events','Events','cal'],['bookings','Bookings','tix'],['customers','Customers','users'],['reports','Reports & analytics','chart'],['orders','Customer orders','tix'],['payments','Payments','tix']];
+$('#nav').innerHTML=NAV.map(([k,l,i])=>`<button data-go="${k}">${ico(i)}${l}</button>`).join('');
+$('#nav').insertAdjacentHTML('afterend','<div style="margin-top:auto;display:grid;gap:8px"><a class="btn s sm" href="/">Customer site</a><button class="btn s sm" id="out">Sign out</button></div>');
+$('#out').onclick=()=>{localStorage.removeItem('eventraToken');location.reload()};
+
+function render(){const v=V[S.view];
+ document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===S.view));
+ $('#title').textContent=v.t;$('#sub').textContent=v.s;
+ $('#view').innerHTML=`<div class="page">${S.loading?'':v.head()}<div id="body">${S.loading?skel():v.body()}</div></div>`}
+const drawBody=()=>{$('#body').innerHTML=V[S.view].body()};
+const reload=safe(async()=>{[S.events,S.regs,S.pay,S.ord,S.dash]=await Promise.all([api('/api/events'),api('/api/registrations'),api('/api/payments'),api('/api/bookings'),api('/api/dashboard')]);S.loading=false;render()});
+const go=v=>{S.view=v;render();reload()};
+
+/* ---------- events ---------- */
+document.addEventListener('click',safe(async e=>{
+ const dl=e.target.closest('[data-dl]');if(dl){e.preventDefault();return download(dl.dataset.dl)}
+ const g=e.target.closest('[data-go]');if(g){if(dlg.open)close();return go(g.dataset.go)}
+ const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
+ if(a==='close')close();
+ else if(a==='new-event')eventForm();
+ else if(a==='edit-event')eventForm(S.events.find(x=>x.id===id));
+ else if(a==='del-event')confirmDlg('This deletes the event and all of its bookings. It cannot be undone.',async()=>{await api('/api/events/'+id,'DELETE');toast('Event deleted');await reload()});
+ else if(a==='seed'){await api('/api/events/seed','POST');toast('Demo data loaded');await reload()}
+ else if(a==='new-booking')bookingForm();
+ else if(a==='view-bk')detail(id);
+ else if(a==='toggle'){await api('/api/attendance/'+id,'PATCH',{});if(dlg.open)close();toast('Attendance updated');await reload()}
+ else if(a==='cancel')confirmDlg('This booking will be cancelled and the seat freed up.',async()=>{await api('/api/registrations/'+id,'DELETE');toast('Booking cancelled');await reload()});
+ else if(a==='markall'){await api(`/api/attendance/event/${S.f.bkEv}/mark-all`,'POST',{present:b.dataset.v==='1'});toast('Attendance updated');await reload()}
+}));
+document.addEventListener('input',e=>{const k=e.target.id;if(['evQ','bkQ','cuQ','odQ'].includes(k)){S.f[k]=e.target.value;drawBody()}});
+document.addEventListener('change',e=>{const k=e.target.id;if(['evCat','evSt','evSort','bkEv','bkSt','odSt'].includes(k)){S.f[k]=e.target.value;['bkEv'].includes(k)?render():drawBody()}});
+dlg.addEventListener('submit',safe(async e=>{e.preventDefault();const f=e.target;let ok=true;
+ f.querySelectorAll('input').forEach(i=>{const m=i.parentNode.querySelector('.fe');if(!m)return;const bad=!i.checkValidity();i.classList.toggle('bad',bad);m.textContent=bad?(i.dataset.msg||i.validationMessage):'';if(bad)ok=false});
+ if(!ok)return;const data=Object.fromEntries(new FormData(f)),err=f.querySelector('.ferr');err.textContent='';
+ try{if(f.dataset.form==='login'){const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw new Error(d.error);if(d.user.role!=='admin')throw new Error('This sign in is for admins. Customers can use the customer site.');localStorage.setItem('eventraToken',d.token);close();toast('Signed in');await reload();return}
+ if(f.dataset.form==='event'){f.dataset.id?await api('/api/events/'+f.dataset.id,'PUT',data):await api('/api/events','POST',data);toast(f.dataset.id?'Event updated':'Event created')}
+ else{await api('/api/registrations','POST',data);toast('Booking added')}
+ close();await reload()}catch(x){err.textContent=x.message}}));
+document.addEventListener('change',safe(async e=>{const d=e.target.dataset;
+ if(d.pay){await api('/api/payments/'+d.pay,'PATCH',{status:e.target.value});toast('Payment updated');await reload()}
+ if(d.ord){await api('/api/bookings/'+d.ord,'PATCH',{bookingStatus:e.target.value});toast('Booking updated');await reload()}}));
+render();TOKEN()?reload():needLogin();
+</script>
+</body>
+</html>
